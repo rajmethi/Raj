@@ -1,0 +1,74 @@
+def fibonacci(n):
+
+  
+  #base case: n = 1
+  
+  if n == 1:
+    return 0
+    
+  if n == 2:
+    return 1
+    
+    
+  #recursive case: n > 1  
+  return fibonacci(n-1) + fibonacci(n-2)
+
+
+def backwardscascade(word):
+  #base case: actual word
+  
+  print(word)
+  
+  #rec case: actual word - 1
+  if len(word) > 1:
+    backwardscascade(word[:-1])
+    
+#backwardscascade is an example of tail recursion!!
+  
+
+def forwardscascade(word):
+  
+  if len(word) > 1:
+    (forwardscascade(word[:-1]))
+    
+  print(word)
+#d
+#do
+#dog
+ 
+#forwardscascade is an example of head recursion
+
+userstring = input("enter a string you would like to check. We will check if it is a palindrome.")
+
+def palcheck(userstring):
+  if len(userstring) <= 1:
+    return True
+  
+  if userstring[0] == userstring[-1]:
+    return palcheck(userstring[1:-1])
+  else:
+    return False
+ 
+
+subs = set()
+def substringgen(mystr,myset):
+  #use set to prevent repeats
+  
+ #base case: when all subs found
+  if len(mystr) == 0:
+    myset.add("")
+    return myset
+ #rec case: change substring length 
+  myset.add(mystr)
+ 
+  result1 = substringgen(mystr[1:],myset)
+  #print(result1)
+  myset = myset.union(result1)
+ 
+  result2 = substringgen(mystr[:-1],myset)
+  #print(result2)
+  myset = myset.union(result2)
+ 
+  return myset
+
+print(substringgen("hey",subs))
