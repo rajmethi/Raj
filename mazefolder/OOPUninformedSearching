@@ -1,0 +1,263 @@
+import maze as mz
+import queue
+
+# construct maze
+# X is goal (located at (2, 1))
+# O is the player (we'll start at (0, 0))
+# * are cells with quicksand (higher cost to travel from this cell to another)
+maze = ""
+maze += "+---+---+---+\n"  
+maze += "|           |\n" # row0
+maze += "+   +---+   +\n"
+maze += "|     * |   |\n" # row1
+maze += "+---+   +   +\n"
+maze += "| X         |\n" # row2
+maze += "+---+---+---+\n"
+      # col0 col1 col2
+
+# row has 14 characters (including new line) so maze width is 14
+maze = mz.Maze(maze, 14)
+'''
+class Node:
+  # modified to store Node state and dictionary of neighbors mapping neighbor node's keys to the weight from the current node to that neighbor
+  def __init__(self, key):
+    self.key = key
+    self.neighbors = {}
+
+  # modified to take in edge weight and update neighborst dictionary
+  def add_neighbor(self, node, weight):
+    self.neighbors[node.key] = weight
+
+    
+  # modified to print state and key value pairs in neighbors
+  def __str__(self):
+    s = "ID: " + self.key + "\nNeighbors: "
+    for n in self.neighbors:
+      s += n + ":" + str(self.neighbors[n]) + "  "
+    return s
+  
+  def __lt__(self, other):
+      return self.key < other.key
+
+'''
+class Node:
+  # modified to store Node state and dictionary of neighbors mapping neighbor node's keys to the weight from the current node to that neighbor
+  def __init__(self, key):
+    self.key = key
+    self.neighbors = {}
+    self.neighborslist = []
+
+  # modified to take in edge weight and update neighborst dictionary
+  def add_neighbor(self, node, weight):
+    self.neighbors[node.key] = weight
+    self.neighborslist.append(node)
+# modified to print state and key 
+# modified to print state and key value pairs in neighbors
+  def __str__(self):
+    s = "ID: " + self.key + "\nNeighbors: "
+    for n in self.neighbors:
+      s += n + ":" + str(self.neighbors[n]) + "  "
+    return s
+  
+  def __lt__(self, other):
+      return self.key < other.key
+
+class Graph:
+  def __init__(self):
+    self.graph = {}
+
+  def add_node(self, node):
+    self.graph[node.key] = node
+
+# modified to create directed edges and take in a weight for the edge
+  def add_edge(self, node1, node2, weight):
+    if not node1.key in self.graph:
+      print("Node with ID " + node1.key + " is not in the graph")
+    elif not node2.key in self.graph:
+      print("Node with ID " + node2.key + " is not in the graph")
+    else:
+      node1.add_neighbor(node2, weight)
+
+  def __str__(self):
+    s = ""
+    for node in self.graph:
+      s += self.graph[node].__str__() + "\n\n"
+    return s
+
+  def get_path_cost(self, path):
+    print(path)
+    cost = 0
+    for i in range(len(path)-1):
+      getnode = self.graph[path[i]]
+      print(getnode)
+      cost += getnode.neighbors[path[i+1]]
+    return cost
+
+        
+    
+    
+    
+    
+    '''
+    for i in range(len(path)-1):
+      cost += self.graph[path[i]].neighbors[path[i+1]]
+    print("Path Cost: " + str(cost))
+  
+class Graph:
+  def __init__(self):
+    self.graph = {}
+
+  def add_node(self, node):
+    self.graph[node.key] = node
+
+  # modified to create directed edges and take in a weight for the edge
+  def add_edge(self, node1, node2, weight):
+    if not node1.key in self.graph:
+      print("Node with ID " + node1.key + " is not in the graph")
+    elif not node2.key in self.graph:
+      print("Node with ID " + node2.key + " is not in the graph")
+    else:
+      node1.add_neighbor(node2, weight)
+
+  def __str__(self):
+    s = ""
+    for node in self.graph:
+      s += self.graph[node].__str__() + "\n\n"
+    return s
+
+  def get_path_cost(self, path):
+    cost = 0
+    for i in range(len(path)-1):
+      cost += self.graph[path[i]].neighbors[path[i+1]]
+    print("Path Cost: " + str(cost))
+'''
+  def get_bfs_path(self, startnode, endnode):
+    visited = set()
+    nodequeue = []
+    visited.add(startnode)
+    nodequeue.append((startnode,[startnode.key]))
+    while nodequeue:
+      
+      currentnode, path = nodequeue.pop(0)
+      print(path)
+      if currentnode == endnode:
+        visited.add(currentnode)
+        return path
+      for neighbor_key in currentnode.neighbors:
+        neighbor = self.graph[neighbor_key]
+        if neighbor not in visited:
+          visited.add(neighbor)
+          nodequeue.append((neighbor, path + [neighbor.key]))
+    return path
+
+  def get_ucs_path(self, startnode, endnode):
+    visited = []
+    path = []
+    q = queue.PriorityQueue()
+    visited.append(startnode.key)
+    q.put((0, startnode, [startnode.key]))
+    while q:
+      cost, node, path = q.get()
+      if node == endnode:
+        return path
+      if node not in visited:
+        visited.append(node)
+        for neighbor in node.neighborslist:
+          if neighbor not in visited:
+            q.put((node.neighbors[neighbor.key] + cost, neighbor, path + [neighbor.key]))
+    return path
+    
+  def get_dfs_path(self, startnode, endnode):
+    visited = set()
+    nodestack = []
+    path = []
+    visited.add(startnode)
+    nodestack.append((startnode, [startnode.key]))
+    while len(nodestack) != 0:
+      currentnode, path = nodestack.pop()
+      if currentnode == endnode:
+        return path
+      #print(currentnode.key, end="")
+      for neighbor in currentnode.neighborslist:
+        if neighbor not in visited:
+          visited.add(neighbor)
+          nodestack.append((neighbor, path + [neighbor.key]))
+    return path
+    
+  def DLS(self, startnode,endnode, depth):
+    visited = []
+    canvisit = []
+    visited.append(startnode)
+    canvisit.append((startnode, 0))
+    while len(canvisit) > 0:
+      currentnode, distance = canvisit.pop()
+      if currentnode == endnode:
+        return visited
+      for neighbor in currentnode.neighborslist:
+        if neighbor not in visited and distance + 1 <= depth:
+          canvisit.append((neighbor, distance + 1))
+          visited.append(neighbor)
+    return visited
+          
+  def get_ids_path(self, startnode, endnode, maxdepth):
+    paths = []
+    visited = self.DLS(startnode, endnode, maxdepth)
+
+    for i in range(maxdepth, -1, -1):
+      path = []
+      nextvisited = self.DLS(startnode, endnode, i)
+      for node in nextvisited:
+
+        path.append(node.key)
+      paths.append(path)
+        
+
+      if len(visited) == len(nextvisited):
+        optimaldepth = i
+    for path in paths:
+      print(len(path))
+    return paths
+
+
+graph = Graph()
+node1 = Node("(0,0)")
+node2 = Node("(0,1)")
+node3 = Node("(0,2)")
+node4 = Node("(1,0)")
+node5 = Node("(1,1)")
+node6 = Node("(1,2)")
+node7 = Node("(2,0)")
+node8 = Node("(2,1)")
+node9 = Node("(2,2)")
+
+graph.add_node(node1)
+graph.add_node(node2)
+graph.add_node(node3)
+graph.add_node(node4)
+graph.add_node(node5)
+graph.add_node(node6)
+graph.add_node(node7)
+graph.add_node(node8)
+graph.add_node(node9)
+
+node1.add_neighbor(node2, 1)
+node1.add_neighbor(node4, 1)
+node2.add_neighbor(node3, 1)
+node3.add_neighbor(node6, 1)
+node6.add_neighbor(node9, 1)
+node9.add_neighbor(node8, 1)
+node8.add_neighbor(node7, 1)
+node4.add_neighbor(node5, 10)
+node5.add_neighbor(node8, 1)
+
+graph.add_edge(node1, node2, 1)
+graph.add_edge(node1, node4, 1)
+graph.add_edge(node2, node3, 1)
+graph.add_edge(node3, node6, 1)
+graph.add_edge(node6, node9, 1)
+graph.add_edge(node9, node8, 1)
+graph.add_edge(node8, node7, 1)
+graph.add_edge(node4, node5, 10)
+graph.add_edge(node5, node8, 1)
+
+print(graph.get_dfs_path(node1, node7))
