@@ -1,0 +1,55 @@
+userpasses = {"janesmith":"secret123", "bobsmith":"programm3r"}
+userbalances = {"janesmith":150, "bobsmith":40000}
+
+continueProgram = True
+while continueProgram:
+  choice = 0
+  print("welcome to the bank! please log in")
+  # for loop to login
+  for i in range(5):  
+    user = input("username: ")
+    passw = input("password: ")
+   
+    if user not in userpasses:
+      print("we dont recognize this username.")
+    elif passw != userpasses[user]:
+      print("your password is incorrect.")
+    else:
+      break
+  
+  if i == 4:
+    print("too many wrong attempts. you have been locked out of your account.")
+    break
+  
+  balance = userbalances[user]  
+  
+  # while loop for transactions or changes to account
+  while choice != 4:
+    #choice = int(input("x"))
+    choice = int(input("Welcome " + user + " ! you currently have " + str(balance) + " in your account. what would you like to do? \n 1. Make a deposit \n 2. Make a withdrawal \n 3. Change your password \n 4. Logout\n"))
+   
+    if choice == 1:
+      deposit = int(input("how much would you like to deposit? "))
+      balance = balance + deposit
+    elif choice == 2:
+      withdrawal = int(input("how much would you like to withdraw? "))
+      if balance - withdrawal < 0:
+        print("error: you've withdrawn more funds than you have.")
+      else:
+          balance = balance - withdrawal
+    elif choice == 3:
+      passw = input("please enter your password ")
+      if passw == userpasses[user]:
+        newpass = input("what would you like your new password to be? ")
+        userpasses[user] = newpass
+      else:
+         print("your password is incorrect.")
+    elif choice > 4:
+      print("invalid choice")
+  print()
+    
+  print("You have chosen to logout")
+  choice = int(input("Do you want to login again? \n type 0 to continue \n type 5 to quit"))
+  if choice == 5:
+    continueProgram = False
+    
