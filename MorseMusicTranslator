@@ -1,0 +1,33 @@
+import pysynth
+
+
+morseDict = {"a": ".-", "b": "-...", "c": "-.-.", "d": "-..", "e": ".", "f": "..-.", "g": "--.", "h": "....", "i": "..", "j": ".---", "k": "-.-", "l": ".-..", "m": "--", "n": "-.", "o": "---", "p": ".--.", "q": "--.-", "r": ".-.", "s": "...", "t": "-", "u": "..-", "v": "...-", "w": ".--", "x": "-..-", "y": "-.--", "z": "--.."}
+
+song = []
+def morsetranslation(message):
+  morse = ""
+  for i in range(0, len(message)):
+    morse = morse + morseDict[message[i]] + " "
+  return(morse)
+
+
+def morsemusic(message):
+  for i in range(0, len(message)):
+    Morse = message[i]
+    if Morse == "-":
+      song.append(('c', 2))
+    elif Morse == ".":
+      song.append(('c', 8))
+    else:
+      song.append(('r', 2))
+  return(song)
+
+message = input("enter a message(in all lowercase): ")
+
+print(morsetranslation(message))
+message = morsetranslation(message)
+
+
+song = morsemusic(message)
+
+pysynth.make_wav(song, fn='song.wav')
