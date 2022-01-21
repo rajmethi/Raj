@@ -1,0 +1,192 @@
+import random
+board = []
+for i in range(3):
+  board.append([" " ," " ," " ])
+  
+def boardprint(board):
+  for i in range(3):
+    if i != 0:
+      print("--+---+--")
+    for j in range(3):
+      if j != 2:
+        print(board[i][j] + " | ", end="")
+      else:
+        print(board[i][j])
+
+def coinflip(): 
+  num = random.randint(0,1)
+  if num == 0:
+    return True
+  else:
+    return False
+
+def movechoice(player):
+  while True:
+    rowinput = int(input("pick a row to play: "))
+    colinput = int(input("pick a column to play: "))
+  
+    if rowinput >= 0 and rowinput <= 2 and colinput >= 0 and colinput <= 2 and board[rowinput][colinput] == " ":
+      board[rowinput][colinput] = player
+      break
+    print("invalid input. try again.")    
+  
+def testwin(row,col,player):
+  testboard = []
+  for i in range(3):
+    testboard.append([" " ," " ," " ])
+  for i in range(3):
+    for j in range(3):
+      testboard[i][j] = board[i][j]
+  
+  testboard[row][col] = player
+  
+  if winconditions(testboard, player) == 1:
+    return True
+  else:
+    return False
+
+def aimovechoice(ai):
+  moves = [[0,0], [0,1], [0,2], [1,0], [1,1], [1,2], [2,0], [2,1], [2,2]]
+  for pair in moves:
+    i2 = pair[0]
+    j2 = pair[1]
+    if board[i2][j2]== " ":
+      if testwin(i2,j2,ai):
+        #boardprint(board)
+        board[i2][j2] = ai
+        return
+  if board[1][1] == " ":
+    board[1][1] = ai
+  elif board[0][0] == " ":
+    board[0][0] = ai
+  elif board[0][2] == " ":
+    board[0][2] = ai
+  elif board[2][0] == " ":
+    board[2][0] = ai
+  elif board[2][2] == " ":
+    board[2][2] = ai
+  else:
+    while True:
+      rowinput = random.randint(0,2)
+      colinput = random.randint(0,2)
+      if board[rowinput][colinput] == " ":
+      
+        board[rowinput][colinput] = ai
+        break
+      
+      
+def winconditions(board, player):
+  if board[0][0] == player:
+    if board[0][1] == player:
+      if board[0][2] == player:
+        #row0horiz
+        return 1
+      
+    if board[1][0] == player:
+      if board[2][0] == player:
+        #col0vert
+        return 1
+        
+  if board[1][1] == player:
+    if board[1][0] == player:
+      if board[1][2] == player:
+        #row1horiz
+        return 1
+    if board[0][1] == player:
+      if board[1][2] == player:
+        #col1vert
+        return 1
+  
+  if board[2][2] == player:
+    if board[0][1] == player:
+      if board[0][2] == player:
+        #col2vert
+        return 1
+    if board[2][1] == player:
+      if board[2][0] == player:
+        #row2horiz
+        return 1
+        
+  if board[1][1] == player:
+    if board[0][2] == player:
+      if board[2][0] == player:
+        #02diag
+        return 1
+        
+    if board[0][0] == player:
+      if board[2][2] == player:
+        #00diag
+        return 1
+        
+def tieconditions(board):
+  takenspaces = 0
+  for i in range(3):
+    for j in range(3):
+      if board[i][j] != " ":
+        takenspaces += 1
+  if takenspaces == 9:
+    return 0
+    
+def playorder():  
+  boardprint(board)
+  if coinflip():
+    print("it is your turn first. You are (X).")
+    human = "x"
+    ai = "o"
+    while True:
+      movechoice(human)
+      print()
+      if winconditions(board, human) == 1:
+        print("you win")
+        boardprint(board)
+        break
+      if tieconditions(board) == 0:
+        print("tie")
+        boardprint(board)
+        break
+      boardprint(board)
+      print("it is the opponent's turn...")
+      aimovechoice(ai)
+      print()
+      if winconditions(board, ai) == 1:
+        print("ai wins")
+        boardprint(board)
+        break
+      if tieconditions(board) == 0:
+        print("tie")
+        boardprint(board)
+        break
+      boardprint(board)
+      
+  else:
+    print("it is the opponent's turn first. You are (O).")
+    human = "o"
+    ai = "x"     
+    while True:
+      aimovechoice(ai)
+      print()
+      if winconditions(board, ai) == 1:
+        print("ai wins")
+        boardprint(board)
+        break
+      if tieconditions(board) == 0:
+        print("tie")
+        boardprint(board)
+        break
+      boardprint(board)
+      print("it is your turn...")
+      movechoice(human)
+      print()
+      if winconditions(board, human) == 1:
+        print("you win")
+        boardprint(board)
+        break
+      if tieconditions(board) == 0:
+        print("tie")
+        boardprint(board)
+        break
+      boardprint(board)
+      
+  
+      
+playorder()
