@@ -1,0 +1,161 @@
+import random
+
+cards = {"ace": "x", "2": 2, "3": 3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "queen": 10,"jack": 10, "king":10}
+
+cardslist = ["ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "queen", "jack", "king"]
+def welcome():
+  welcome = input("press enter to play.")
+
+def intializeDeck(deck):
+  deck = []
+  for i in range(2):
+      deck.append(random.choice(cardslist))
+  return deck 
+
+def sumHand(deck):
+  hand = 0
+  
+  for card in deck:
+    if card != "ace":
+      hand += cards[card]
+      
+  #what if we have an ace?
+  # for i in range(deck.count("ace"))
+  
+  if deck.count("ace") != 0:
+    for i in range(deck.count("ace")):
+      if hand + 11 <= 21:
+        hand += 11
+      else:
+        hand += 1
+      
+  return hand
+
+def Win(deck):
+  if sumHand(deck) == 21:
+    return True
+  return False
+  
+def Loss(deck):
+  if sumHand(deck) > 21:
+    return True
+  return False
+  
+def HitorStay(deck):
+  choice = input("Would you like to hit or stay? (H/S)")
+  print()
+  if choice == "H":
+    deck.append(random.choice(cardslist))
+    print(deck)
+  elif choice == "S":
+    return [deck, False]
+  else:
+    print("Invalid input")
+
+  return [deck, True] 
+  
+def HitorStayDealer(deck):
+  while sumHand(deck) <= 17:
+    deck.append(random.choice(cardslist))
+  return deck
+    
+    
+def Dealer():
+  dealerhand = []
+
+  dealerhand = intializeDeck(dealerhand)
+  print("here is the dealer's hand: \n" + str(dealerhand))
+  print()
+  x = True
+  while x:
+    print()
+    if Win(dealerhand):
+      print("the dealer won")
+      break 
+      
+    elif Loss(dealerhand):
+      print("the dealer lost")
+      break
+    
+    else:
+      dealerhand = HitorStayDealer(dealerhand)
+      if (sumHand(dealerhand) > 17):
+        x = False
+        
+  if x == False:
+    if Win(dealerhand):
+      print("the dealer won")
+      
+      
+    elif Loss(dealerhand):
+      print("the dealer lost")
+      
+    
+    
+  print(str(dealerhand))
+  return dealerhand
+  
+def CompareHands(playerhand, dealerhand):
+  if sumHand(playerhand) > sumHand(dealerhand):
+    return 0
+  elif sumHand(playerhand) == sumHand(dealerhand):
+    return 1
+  else:
+    return 2
+    
+def whoWon(playerhand,dealerhand):
+  if sumHand(dealerhand) < 21:
+    if CompareHands(playerhand,dealerhand) == 0:
+      print()
+      print("you won")
+      print()
+    elif CompareHands(playerhand,dealerhand) == 1:
+      print()
+      print("you tied")
+      print()
+    else:
+      print()
+      print("you lost")
+      print()
+    
+          
+def Player():
+    playerhand = []
+    playerhand = intializeDeck(playerhand)
+    print("here is your hand: \n" + str(playerhand))
+    x= True
+    while x:
+      if Win(playerhand):
+        print("you won")
+        return [playerhand, True]
+        break
+      
+      elif Loss(playerhand):
+        print("you lost")
+        return [playerhand, True]
+        break
+      else:
+        x = HitorStay(playerhand)[1]
+    return [playerhand, False] 
+        
+def playagain():
+  playagain = input("press enter to play again")
+      
+def playgame():
+  y = True
+  while y:
+    
+    playerturn = Player()
+    
+    if playerturn[1] == False:
+      playerhand = playerturn[0]
+      dealerhand = Dealer()
+      whoWon(playerhand, dealerhand)
+      
+    playagain()
+  
+      
+    
+      
+      
+playgame()      
